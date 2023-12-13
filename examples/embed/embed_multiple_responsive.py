@@ -12,7 +12,7 @@ from bokeh.util.browser import view
 PLOT_OPTIONS = dict(width=800, height=300)
 SCATTER_OPTIONS = dict(size=12, alpha=0.5)
 
-data = lambda: [random.choice([i for i in range(100)]) for r in range(10)]
+data = lambda: [random.choice(list(range(100))) for _ in range(10)]
 
 red = figure(sizing_mode='scale_width', tools='pan', **PLOT_OPTIONS)
 red.scatter(data(), data(), color="red", **SCATTER_OPTIONS)

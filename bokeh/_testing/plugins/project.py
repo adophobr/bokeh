@@ -91,7 +91,7 @@ __all__ = (
 @pytest.fixture
 def output_file_url(request: pytest.FixtureRequest, file_server: SimpleWebServer) -> str:
     from bokeh.io import output_file
-    filename = request.function.__name__ + '.html'
+    filename = f'{request.function.__name__}.html'
     file_obj = request.fspath.dirpath().join(filename)
     file_path = file_obj.strpath
     url = file_path.replace('\\', '/')  # Windows-proof
@@ -101,13 +101,14 @@ def output_file_url(request: pytest.FixtureRequest, file_server: SimpleWebServer
     def tear_down() -> None:
         if file_obj.isfile():
             file_obj.remove()
+
     request.addfinalizer(tear_down)
 
     return file_server.where_is(url)
 
 @pytest.fixture
 def test_file_path_and_url(request: pytest.FixtureRequest, file_server: SimpleWebServer) -> Tuple[str, str]:
-    filename = request.function.__name__ + '.html'
+    filename = f'{request.function.__name__}.html'
     file_obj = request.fspath.dirpath().join(filename)
     file_path = file_obj.strpath
     url = file_path.replace('\\', '/')  # Windows-proof
@@ -115,6 +116,7 @@ def test_file_path_and_url(request: pytest.FixtureRequest, file_server: SimpleWe
     def tear_down() -> None:
         if file_obj.isfile():
             file_obj.remove()
+
     request.addfinalizer(tear_down)
 
     return file_path, file_server.where_is(url)

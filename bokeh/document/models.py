@@ -177,7 +177,11 @@ class DocumentModelManager:
 
     @property
     def synced_references(self) -> Set[Model]:
-        return set(model for model in self._models.values() if model not in self._new_models)
+        return {
+            model
+            for model in self._models.values()
+            if model not in self._new_models
+        }
 
     def flush(self) -> None:
         ''' Clean up transient state of the document's models. '''

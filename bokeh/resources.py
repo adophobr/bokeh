@@ -312,7 +312,7 @@ class BaseResources:
 
         if root_url and not root_url.endswith("/"):
             # root_url should end with a /, adding one
-            root_url = root_url + "/"
+            root_url = f"{root_url}/"
         self._root_url = root_url
 
         self.messages = []
@@ -335,16 +335,13 @@ class BaseResources:
     @log_level.setter
     def log_level(self, level: LogLevel) -> None:
         valid_levels = get_args(LogLevel)
-        if not (level is None or level in valid_levels):
+        if level is not None and level not in valid_levels:
             raise ValueError(f"Unknown log level '{level}', valid levels are: {valid_levels}")
         self._log_level = level
 
     @property
     def root_url(self) -> str:
-        if self._root_url is not None:
-            return self._root_url
-        else:
-            return self._default_root_url
+        return self._root_url if self._root_url is not None else self._default_root_url
 
     # Public methods ----------------------------------------------------------
 
@@ -358,8 +355,7 @@ class BaseResources:
         minified = ".min" if not self.dev and self.minified else ""
 
         files = [f"{component}{minified}.{kind}" for component in self.components(kind)]
-        paths = [join(self.base_dir, kind, file) for file in files]
-        return paths
+        return [join(self.base_dir, kind, file) for file in files]
 
     def _collect_external_resources(self, resource_attr: ResourceAttr) -> List[str]:
         """ Collect external resources set on resource_attr attribute of all models."""
@@ -696,7 +692,7 @@ def _get_cdn_urls(version: str | None = None, minified: bool = True) -> Urls:
         return f"{comp}-{version}{_minified}.{kind}"
 
     def mk_url(comp: str, kind: Kind) -> str:
-        return f"{base_url}/{container}/" + mk_filename(comp, kind)
+        return f"{base_url}/{container}/{mk_filename(comp, kind)}"
 
     result = Urls(urls=lambda components, kind: [mk_url(component, kind) for component in components])
 

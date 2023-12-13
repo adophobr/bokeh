@@ -68,7 +68,7 @@ def _read_data(name):
     '''
 
     '''
-    filename = external_path(name+'.csv')
+    filename = external_path(f'{name}.csv')
     data = {
         'date' : [],
         'open' : [],

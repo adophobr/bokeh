@@ -43,12 +43,14 @@ def make_calendar(year, month, firstweekday="Mon"):
     day_names = pick_weekdays(day_abbrs)
     week_days = pick_weekdays([workday]*5 + [weekend]*2)
 
-    source = ColumnDataSource(data=dict(
-        days            = list(day_names)*month_weeks,
-        weeks           = sum([ [str(week)]*7 for week in range(month_weeks) ], []),
-        month_days      = month_days,
-        day_backgrounds = sum([week_days]*month_weeks, []),
-    ))
+    source = ColumnDataSource(
+        data=dict(
+            days=list(day_names) * month_weeks,
+            weeks=sum(([str(week)] * 7 for week in range(month_weeks)), []),
+            month_days=month_days,
+            day_backgrounds=sum([week_days] * month_weeks, []),
+        )
+    )
 
     holidays = [ (date, summary.replace("(US-OPM)", "").strip()) for (date, summary) in us_holidays
         if date.year == year and date.month == month and "(US-OPM)" in summary ]
@@ -104,5 +106,5 @@ if __name__ == "__main__":
     filename = "calendars.html"
     with open(filename, "w") as f:
         f.write(file_html(doc, INLINE, "Calendar 2014"))
-    print("Wrote %s" % filename)
+    print(f"Wrote {filename}")
     view(filename)

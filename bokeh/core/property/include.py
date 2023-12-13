@@ -52,7 +52,7 @@ class Include(PropertyDescriptorFactory):
 
         self.delegate = delegate
         self.help = help
-        self.prefix = prefix + "_" if prefix else ""
+        self.prefix = f"{prefix}_" if prefix else ""
 
     def make_descriptors(self, _base_name):
         descriptors = []

@@ -380,9 +380,8 @@ def _any(objs: Sequence[Model | Document], query: Callable[[Model], bool]) -> bo
         if isinstance(obj, Document):
             if _any(obj.roots, query):
                 return True
-        else:
-            if any(query(ref) for ref in obj.references()):
-                return True
+        elif any(query(ref) for ref in obj.references()):
+            return True
     return False
 
 def _use_tables(objs: Sequence[Model | Document]) -> bool:

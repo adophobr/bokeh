@@ -56,5 +56,5 @@ if __name__ == "__main__":
     filename = "colors.html"
     with open(filename, "w") as f:
         f.write(file_html(doc, INLINE, "CSS3 Color Names"))
-    print("Wrote %s" % filename)
+    print(f"Wrote {filename}")
     view(filename)

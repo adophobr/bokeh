@@ -52,5 +52,5 @@ if __name__ == "__main__":
     filename = "choropleth.html"
     with open(filename, "w") as f:
         f.write(file_html(doc, INLINE, "Choropleth of all US counties, Unemployment 2009"))
-    print("Wrote %s" % filename)
+    print(f"Wrote {filename}")
     view(filename)

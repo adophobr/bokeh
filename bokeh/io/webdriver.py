@@ -73,13 +73,14 @@ def create_firefox_webdriver() -> WebDriver:
         join(dirname(firefox), "FirefoxApp", "Contents", "MacOS", "firefox"),
     ]
 
-    for firefox_path in firefox_paths:
-        if _is_executable(firefox_path):
-            binary_path = firefox_path
-            break
-    else:
-        binary_path = firefox
-
+    binary_path = next(
+        (
+            firefox_path
+            for firefox_path in firefox_paths
+            if _is_executable(firefox_path)
+        ),
+        firefox,
+    )
     from selenium.webdriver.firefox.firefox_binary import FirefoxBinary  # type: ignore [import]
     binary = FirefoxBinary(binary_path)
 

@@ -94,10 +94,7 @@ class Seq(ContainerProperty[T]):
             return
 
         if self._is_seq(value):
-            invalid = []
-            for item in value:
-                if not self.item_type.is_valid(item):
-                    invalid.append(item)
+            invalid = [item for item in value if not self.item_type.is_valid(item)]
             msg = "" if not detail else f"expected an element of {self}, got seq with invalid items {invalid!r}"
             raise ValueError(msg)
 
@@ -232,9 +229,7 @@ class ColumnData(Dict):
         from ...document.events import ColumnDataChangedEvent, ColumnsStreamedEvent
         if isinstance(hint, ColumnDataChangedEvent):
             return { col: hint.model.data[col] for col in hint.cols }
-        if isinstance(hint, ColumnsStreamedEvent):
-            return hint.data
-        return value
+        return hint.data if isinstance(hint, ColumnsStreamedEvent) else value
 
     def wrap(self, value):
         """ Some property types need to wrap their values in special containers, etc.
@@ -305,9 +300,7 @@ class RestrictedDict(Dict):
     def validate(self, value, detail=True):
         super().validate(value, detail)
 
-        error_keys = self._disallow & value.keys()
-
-        if error_keys:
+        if error_keys := self._disallow & value.keys():
             msg = "" if not detail else f"Disallowed keys: {error_keys!r}"
             raise ValueError(msg)
 

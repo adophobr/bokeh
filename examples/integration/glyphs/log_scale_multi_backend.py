@@ -8,13 +8,15 @@ from bokeh.plotting import figure
 def make_figure(output_backend):
     x = np.linspace(0.1, 5, 100)
 
-    p = figure(y_axis_type="log",
-               y_range=(0.001, 10**22),
-               width=400,
-               height=400,
-               toolbar_location=None,
-               output_backend=output_backend,
-               title="Backend: %s" % output_backend)
+    p = figure(
+        y_axis_type="log",
+        y_range=(0.001, 10**22),
+        width=400,
+        height=400,
+        toolbar_location=None,
+        output_backend=output_backend,
+        title=f"Backend: {output_backend}",
+    )
 
     p.xaxis.axis_label = 'Domain'
     p.yaxis.axis_label = 'Values (log scale)'

@@ -99,9 +99,7 @@ def make_tab(title, glyph):
 
     plot.add_tools(HoverTool())
 
-    tab = Panel(child=plot, title=title, closable=True)
-
-    return tab
+    return Panel(child=plot, title=title, closable=True)
 
 def make_tabs(objs):
     return Tabs(tabs=[ make_tab(title, obj) for title, obj in objs ], width=600)
@@ -116,5 +114,5 @@ if __name__ == "__main__":
     filename = "glyphs.html"
     with open(filename, "w") as f:
         f.write(file_html(doc, INLINE, "Glyphs"))
-    print("Wrote %s" % filename)
+    print(f"Wrote {filename}")
     view(filename)

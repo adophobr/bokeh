@@ -63,13 +63,12 @@ NotRequired = Union[_UnspecifiedType, _T]
 
 def entries(obj: Any) -> Iterable[Tuple[str, Any]]:
     """ Iterate over a dataclass' fields and their values. """
-    if is_dataclass(obj):
-        for f in fields(obj):
-            value = getattr(obj, f.name)
-            if value is not Unspecified:
-                yield (f.name, value)
-    else:
+    if not is_dataclass(obj):
         raise TypeError(f"expected a dataclass, got {type(obj)}")
+    for f in fields(obj):
+        value = getattr(obj, f.name)
+        if value is not Unspecified:
+            yield (f.name, value)
 
 def is_dataclass(obj: Any) -> bool:
     return hasattr(type(obj), "__dataclass_fields__")

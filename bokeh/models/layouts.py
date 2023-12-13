@@ -410,10 +410,11 @@ class Box(LayoutDOM):
 
     def __init__(self, *args, **kwargs) -> None:
 
-        if len(args) > 0 and "children" in kwargs:
-            raise ValueError("'children' keyword cannot be used with positional arguments")
-        elif len(args) > 0:
-            kwargs["children"] = list(args)
+        if args:
+            if "children" in kwargs:
+                raise ValueError("'children' keyword cannot be used with positional arguments")
+            else:
+                kwargs["children"] = list(args)
 
         super().__init__(**kwargs)
 
@@ -425,14 +426,12 @@ class Box(LayoutDOM):
 
     @warning(BOTH_CHILD_AND_ROOT)
     def _check_child_is_also_root(self):
-        problems = []
-        for c in self.children:
-            if c.document is not None and c in c.document.roots:
-                problems.append(str(c))
-        if problems:
-            return ", ".join(problems)
-        else:
-            return None
+        problems = [
+            str(c)
+            for c in self.children
+            if c.document is not None and c in c.document.roots
+        ]
+        return ", ".join(problems) if problems else None
 
     @error(REPEATED_LAYOUT_CHILD)
     def _check_repeated_layout_children(self):

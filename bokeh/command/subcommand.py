@@ -144,11 +144,7 @@ class Subcommand(metaclass=ABCMeta):
             flags, spec = arg
             if not isinstance(flags, tuple):
                 flags = (flags,)
-            if not isinstance(spec, dict):
-                kwargs = dict(entries(spec))
-            else:
-                # NOTE: allow dict for run time backwards compatibility, but don't include in types
-                kwargs = spec
+            kwargs = dict(entries(spec)) if not isinstance(spec, dict) else spec
             self.parser.add_argument(*flags, **kwargs)
 
     @abstractmethod

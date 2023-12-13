@@ -112,15 +112,15 @@ def from_networkx(graph, layout_function, **kwargs):
         graph_renderer.edge_renderer.data_source.data = edge_dict
 
         if callable(layout_function):
-            graph_layout = layout_function(graph, **kwargs)
+                graph_layout = layout_function(graph, **kwargs)
         else:
-            graph_layout = layout_function
+                graph_layout = layout_function
 
-            node_keys = graph_renderer.node_renderer.data_source.data['index']
-            if set(node_keys) != set(layout_function.keys()):
-                from warnings import warn
-                warn("Node keys in 'layout_function' don't match node keys in the graph. "
-                     "These nodes may not be displayed correctly.")
+                node_keys = graph_renderer.node_renderer.data_source.data['index']
+                if set(node_keys) != set(graph_layout.keys()):
+                        from warnings import warn
+                        warn("Node keys in 'layout_function' don't match node keys in the graph. "
+                             "These nodes may not be displayed correctly.")
 
         graph_renderer.layout_provider = StaticLayoutProvider(graph_layout=graph_layout)
 

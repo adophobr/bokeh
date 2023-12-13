@@ -100,5 +100,5 @@ if __name__ == "__main__":
     filename = "iris_splom.html"
     with open(filename, "w") as f:
         f.write(file_html(doc, INLINE, "Iris Data SPLOM"))
-    print("Wrote %s" % filename)
+    print(f"Wrote {filename}")
     view(filename)

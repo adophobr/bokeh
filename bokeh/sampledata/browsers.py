@@ -71,7 +71,7 @@ def _read_data():
 
     icons = {}
     for browser in ["Chrome", "Firefox", "Safari", "Opera", "IE"]:
-        with open(package_path(join("icons", browser.lower() + "_32x32.png")), "rb") as icon:
+        with open(package_path(join("icons", f"{browser.lower()}_32x32.png")), "rb") as icon:
             icons[browser] = icon.read()
 
     return df, icons

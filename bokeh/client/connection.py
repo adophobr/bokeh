@@ -142,9 +142,7 @@ class ClientConnection:
         the error code. None otherwise.
 
         '''
-        if not isinstance(self._state, DISCONNECTED):
-            return 0
-        return self._state.error_code
+        return self._state.error_code if isinstance(self._state, DISCONNECTED) else 0
 
     @property
     def error_detail(self) -> str:
@@ -162,7 +160,8 @@ class ClientConnection:
         def connected_or_closed() -> bool:
             # we should be looking at the same state here as the 'connected' property above, so connected
             # means both connected and that we did our initial message exchange
-            return isinstance(self._state, CONNECTED_AFTER_ACK) or isinstance(self._state, DISCONNECTED)
+            return isinstance(self._state, (CONNECTED_AFTER_ACK, DISCONNECTED))
+
         self._loop_until(connected_or_closed)
 
     def close(self, why: str = "closed") -> None:
@@ -337,7 +336,7 @@ class ClientConnection:
             self._loop.stop()
             return None
         else:
-            log.debug("Running state " + self._state.__class__.__name__)
+            log.debug(f"Running state {self._state.__class__.__name__}")
             await self._state.run(self)
 
     async def _pop_message(self) -> Message[Any] | None:

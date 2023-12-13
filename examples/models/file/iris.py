@@ -53,5 +53,5 @@ if __name__ == "__main__":
     filename = "iris.html"
     with open(filename, "w") as f:
         f.write(file_html(doc, INLINE, "Iris Data Scatter Example"))
-    print("Wrote %s" % filename)
+    print(f"Wrote {filename}")
     view(filename)

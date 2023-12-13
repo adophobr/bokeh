@@ -21,9 +21,14 @@ from bokeh.themes import Theme
 def generate_color_range(N, I):
     HSV_tuples = [ (x*1.0/N, 0.5, I) for x in range(N) ]
     RGB_tuples = map(lambda x: colorsys.hsv_to_rgb(*x), HSV_tuples)
-    for_conversion = []
-    for RGB_tuple in RGB_tuples:
-        for_conversion.append((int(RGB_tuple[0]*255), int(RGB_tuple[1]*255), int(RGB_tuple[2]*255)))
+    for_conversion = [
+        (
+            int(RGB_tuple[0] * 255),
+            int(RGB_tuple[1] * 255),
+            int(RGB_tuple[2] * 255),
+        )
+        for RGB_tuple in RGB_tuples
+    ]
     hex_colors = [ rgb_to_hex(RGB_tuple) for RGB_tuple in for_conversion ]
     return hex_colors, for_conversion
 
@@ -33,7 +38,7 @@ def rgb_to_hex(rgb):
 
 # convert hexadecimal to RGB tuple
 def hex_to_dec(hex):
-    red = ''.join(hex.strip('#')[0:2])
+    red = ''.join(hex.strip('#')[:2])
     green = ''.join(hex.strip('#')[2:4])
     blue = ''.join(hex.strip('#')[4:6])
     return (int(red, 16), int(green, 16), int(blue,16))
@@ -100,7 +105,7 @@ green_slider.js_on_change('value', callback)
 
 brightness = 0.8 # change to have brighter/darker colors
 crx = list(range(1,1001)) # the resolution is 1000 colors
-cry = [ 5 for i in range(len(crx)) ]
+cry = [5 for _ in range(len(crx))]
 crcolor, crRGBs = generate_color_range(1000,brightness) # produce spectrum
 
 # make data source object to allow information to be displayed by hover tool

@@ -434,7 +434,7 @@ class Plot(LayoutDOM):
         if not self.x_range: missing.append('x_range')
         if not self.y_range: missing.append('y_range')
         if missing:
-            return ", ".join(missing) + " [%s]" % self
+            return ", ".join(missing) + f" [{self}]"
 
     @error(REQUIRED_SCALE)
     def _check_required_scale(self) -> str | None:
@@ -442,7 +442,7 @@ class Plot(LayoutDOM):
         if not self.x_scale: missing.append('x_scale')
         if not self.y_scale: missing.append('y_scale')
         if missing:
-            return ", ".join(missing) + " [%s]" % self
+            return ", ".join(missing) + f" [{self}]"
 
     @error(INCOMPATIBLE_SCALE_AND_RANGE)
     def _check_compatible_scale_and_ranges(self) -> str | None:
@@ -455,29 +455,31 @@ class Plot(LayoutDOM):
         if self.x_scale is not None:
             for rng in x_ranges:
                 if isinstance(rng, (DataRange1d, Range1d)) and not isinstance(self.x_scale, (LinearScale, LogScale)):
-                    incompatible.append("incompatibility on x-dimension: %s, %s" %(rng, self.x_scale))
+                    incompatible.append(f"incompatibility on x-dimension: {rng}, {self.x_scale}")
                 elif isinstance(rng, FactorRange) and not isinstance(self.x_scale, CategoricalScale):
-                    incompatible.append("incompatibility on x-dimension: %s/%s" %(rng, self.x_scale))
+                    incompatible.append(f"incompatibility on x-dimension: {rng}/{self.x_scale}")
                 # special case because CategoricalScale is a subclass of LinearScale, should be removed in future
                 if isinstance(rng, (DataRange1d, Range1d)) and isinstance(self.x_scale, CategoricalScale):
-                    incompatible.append("incompatibility on x-dimension: %s, %s" %(rng, self.x_scale))
+                    incompatible.append(f"incompatibility on x-dimension: {rng}, {self.x_scale}")
 
         if self.y_scale is not None:
             for rng in y_ranges:
                 if isinstance(rng, (DataRange1d, Range1d)) and not isinstance(self.y_scale, (LinearScale, LogScale)):
-                    incompatible.append("incompatibility on y-dimension: %s/%s" %(rng, self.y_scale))
+                    incompatible.append(f"incompatibility on y-dimension: {rng}/{self.y_scale}")
                 elif isinstance(rng, FactorRange) and not isinstance(self.y_scale, CategoricalScale):
-                    incompatible.append("incompatibility on y-dimension: %s/%s" %(rng, self.y_scale))
+                    incompatible.append(f"incompatibility on y-dimension: {rng}/{self.y_scale}")
                 # special case because CategoricalScale is a subclass of LinearScale, should be removed in future
                 if isinstance(rng, (DataRange1d, Range1d)) and isinstance(self.y_scale, CategoricalScale):
-                    incompatible.append("incompatibility on y-dimension: %s, %s" %(rng, self.y_scale))
+                    incompatible.append(f"incompatibility on y-dimension: {rng}, {self.y_scale}")
 
         if incompatible:
-            return ", ".join(incompatible) + " [%s]" % self
+            return ", ".join(incompatible) + f" [{self}]"
 
     @warning(MISSING_RENDERERS)
     def _check_missing_renderers(self) -> str | None:
-        if len(self.renderers) == 0 and len([x for x in self.center if isinstance(x, Annotation)]) == 0:
+        if len(self.renderers) == 0 and not [
+            x for x in self.center if isinstance(x, Annotation)
+        ]:
             return str(self)
 
     @error(BAD_EXTRA_RANGE_NAME)
@@ -489,12 +491,11 @@ class Plot(LayoutDOM):
         }
         for place in list(Place) + ['renderers']:
             for ref in getattr(self, place):
-                bad = ', '.join(
+                if bad := ', '.join(
                     f"{axis}='{getattr(ref, axis)}'"
                     for axis, keys in valid.items()
                     if getattr(ref, axis, 'default') not in keys
-                )
-                if bad:
+                ):
                     msg += (", " if msg else "") + f"{bad} [{ref}]"
         if msg:
             return msg
@@ -901,10 +902,7 @@ class _list_attr_splat(list):
             raise AttributeError("Trying to access %r attribute on a 'splattable' list, but list items have no %r attribute" % (attr, attr))
 
     def __dir__(self):
-        if len({type(x) for x in self}) == 1:
-            return dir(self[0])
-        else:
-            return dir(self)
+        return dir(self[0]) if len({type(x) for x in self}) == 1 else dir(self)
 
 _LEGEND_EMPTY_WARNING = """
 You are attempting to set `plot.legend.%s` on a plot that has zero legends added, this will have no effect.

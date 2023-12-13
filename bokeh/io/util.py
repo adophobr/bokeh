@@ -81,7 +81,7 @@ def default_filename(ext: str) -> str:
         return temp_filename(ext)
 
     name, _ = splitext(basename(filename))
-    return join(basedir, name + "." + ext)
+    return join(basedir, f"{name}.{ext}")
 
 def detect_current_filename() -> str | None:
     ''' Attempt to return the filename of the currently running Python process
@@ -107,7 +107,7 @@ def temp_filename(ext: str) -> str:
     ''' Generate a temporary, writable filename with the given extension
 
     '''
-    return NamedTemporaryFile(suffix="." + ext).name
+    return NamedTemporaryFile(suffix=f".{ext}").name
 
 #-----------------------------------------------------------------------------
 # Private API

@@ -30,10 +30,7 @@ def sea_surface_handler(doc: Document) -> None:
     plot.line("time", "temperature", source=source)
 
     def callback(attr: str, old: Any, new: Any) -> None:
-        if new == 0:
-            data = df
-        else:
-            data = df.rolling(f"{new}D").mean()
+        data = df if new == 0 else df.rolling(f"{new}D").mean()
         source.data = dict(ColumnDataSource(data=data).data)
 
     slider = Slider(start=0, end=30, value=0, step=1, title="Smoothing by N Days")
@@ -71,5 +68,5 @@ def sea_surface(request: HttpRequest) -> HttpResponse:
     return render(request, "embed.html", dict(script=script))
 
 def sea_surface_custom_uri(request: HttpRequest) -> HttpResponse:
-    script = server_document(request._current_scheme_host + "/sea_surface")
+    script = server_document(f"{request._current_scheme_host}/sea_surface")
     return render(request, "embed.html", dict(script=script))

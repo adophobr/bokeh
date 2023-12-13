@@ -303,7 +303,7 @@ class BokehTornado(TornadoApplication):
             prefix = ""
         prefix = prefix.strip("/")
         if prefix:
-            prefix = "/" + prefix
+            prefix = f"/{prefix}"
 
         self._prefix = prefix
 
@@ -312,11 +312,10 @@ class BokehTornado(TornadoApplication):
         if keep_alive_milliseconds < 0:
             # 0 means "disable"
             raise ValueError("keep_alive_milliseconds must be >= 0")
-        else:
-            if keep_alive_milliseconds == 0:
-                log.info("Keep-alive ping disabled")
-            elif keep_alive_milliseconds != DEFAULT_KEEP_ALIVE_MS:
-                log.info("Keep-alive ping configured every %d milliseconds", keep_alive_milliseconds)
+        if keep_alive_milliseconds == 0:
+            log.info("Keep-alive ping disabled")
+        elif keep_alive_milliseconds != DEFAULT_KEEP_ALIVE_MS:
+            log.info("Keep-alive ping configured every %d milliseconds", keep_alive_milliseconds)
         self._keep_alive_milliseconds = keep_alive_milliseconds
 
         if check_unused_sessions_milliseconds <= 0:
@@ -409,10 +408,7 @@ class BokehTornado(TornadoApplication):
         for key, app in applications.items():
             app_patterns: URLRoutes = []
             for p in per_app_patterns:
-                if key == "/":
-                    route = p[0]
-                else:
-                    route = key + p[0]
+                route = p[0] if key == "/" else key + p[0]
                 context: RouteContext = {"application_context": self._applications[key]}
                 if issubclass(p[1], WSHandler):
                     context['compression_level'] = websocket_compression_level
@@ -451,7 +447,7 @@ class BokehTornado(TornadoApplication):
 
         log.debug("Patterns are:")
         for line in pformat(all_patterns, width=60).split("\n"):
-            log.debug("  " + line)
+            log.debug(f"  {line}")
 
         super().__init__(all_patterns,
             websocket_max_message_size=websocket_max_message_size_bytes,
@@ -687,7 +683,7 @@ class BokehTornado(TornadoApplication):
 
         '''
         if app_path not in self._applications:
-            raise ValueError("Application %s does not exist on this server" % app_path)
+            raise ValueError(f"Application {app_path} does not exist on this server")
         return self._applications[app_path].get_session(session_id)
 
     def get_sessions(self, app_path: str) -> List[ServerSession]:
@@ -703,7 +699,7 @@ class BokehTornado(TornadoApplication):
 
         '''
         if app_path not in self._applications:
-            raise ValueError("Application %s does not exist on this server" % app_path)
+            raise ValueError(f"Application {app_path} does not exist on this server")
         return list(self._applications[app_path].sessions)
 
     # Periodic Callbacks ------------------------------------------------------
@@ -724,10 +720,7 @@ class BokehTornado(TornadoApplication):
         log.debug("[pid %d] %d clients connected", PID, len(self._clients))
         for app_path, app in self._applications.items():
             sessions = list(app.sessions)
-            unused_count = 0
-            for s in sessions:
-                if s.connection_count == 0:
-                    unused_count += 1
+            unused_count = sum(1 for s in sessions if s.connection_count == 0)
             log.debug("[pid %d]   %s has %d sessions with %d unused",
                       PID, app_path, len(sessions), unused_count)
 
@@ -760,8 +753,7 @@ class BokehTornado(TornadoApplication):
         objs = [x for x in gc.get_objects() if isinstance(x, ModuleType) and "bokeh_app_" in str(x)]
         log.debug(f"  uncollected modules: {len(objs)}")
 
-        pd = import_optional('pandas')
-        if pd:
+        if pd := import_optional('pandas'):
             objs = [x for x in all_objs if isinstance(x, pd.DataFrame)]
             log.debug("  uncollected DataFrames: %d", len(objs))
 
@@ -783,7 +775,7 @@ class BokehTornado(TornadoApplication):
 
 def create_static_handler(prefix: str, key: str, app: Application) -> Tuple[str, StaticFileHandler|StaticHandler, Dict[str, Any]]:
     route = prefix
-    route += "/static/(.*)" if key == "/" else key + "/static/(.*)"
+    route += "/static/(.*)" if key == "/" else f"{key}/static/(.*)"
     if app.static_path is not None:
         return (route, StaticFileHandler, {"path" : app.static_path})
     return (route, StaticHandler, {})

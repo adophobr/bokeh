@@ -14,13 +14,10 @@ sizes = np.linspace(10, 20, N)
 xpts = np.array([-.09, -.12, .0, .12, .09])
 ypts = np.array([-.1, .02, .1, .02, -.1])
 
-children = []
-
 p = figure(title="annular_wedge")
 p.annular_wedge(x, y, 10, 20, 0.6, 4.1, color="#8888ee",
                 inner_radius_units="screen", outer_radius_units="screen")
-children.append(p)
-
+children = [p]
 p = figure(title="annulus")
 p.annulus(x, y, 10, 20, color="#7FC97F",
           inner_radius_units="screen", outer_radius_units = "screen")

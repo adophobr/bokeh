@@ -51,12 +51,18 @@ try:
     import colorama
     from colorama import Fore, Style
 
-    def bright(text: str) -> str: return "%s%s%s" % (Style.BRIGHT, text, Style.RESET_ALL)
-    def dim(text: str) -> str:    return "%s%s%s" % (Style.DIM, text, Style.RESET_ALL)
-    def red(text: str) -> str:    return "%s%s%s" % (Fore.RED, text, Style.RESET_ALL)
-    def green(text: str) -> str:  return "%s%s%s" % (Fore.GREEN, text, Style.RESET_ALL)
-    def white(text: str) -> str:  return "%s%s%s%s" % (Fore.WHITE, Style.BRIGHT, text, Style.RESET_ALL)
-    def yellow(text: str) -> str: return "%s%s%s" % (Fore.YELLOW, text, Style.RESET_ALL)
+    def bright(text: str) -> str:
+        return f"{Style.BRIGHT}{text}{Style.RESET_ALL}"
+    def dim(text: str) -> str:
+        return f"{Style.DIM}{text}{Style.RESET_ALL}"
+    def red(text: str) -> str:
+        return f"{Fore.RED}{text}{Style.RESET_ALL}"
+    def green(text: str) -> str:
+        return f"{Fore.GREEN}{text}{Style.RESET_ALL}"
+    def white(text: str) -> str:
+        return f"{Fore.WHITE}{Style.BRIGHT}{text}{Style.RESET_ALL}"
+    def yellow(text: str) -> str:
+        return f"{Fore.YELLOW}{text}{Style.RESET_ALL}"
 
     if sys.platform == "win32":
         colorama.init()
@@ -79,23 +85,23 @@ def write(*values: str, **kwargs: str) -> None:
 
 
 def fail(msg: str | None = None, label: str = "FAIL") -> None:
-    text = " " + msg if msg is not None else ""
-    write("%s%s" % (red("[%s]" % label), text))
+    text = f" {msg}" if msg is not None else ""
+    write(f'{red(f"[{label}]")}{text}')
 
 
 def info(msg: str | None = None, label: str = "INFO") -> None:
-    text = " " + msg if msg is not None else ""
-    write("%s%s" % (white("[%s]" % label), text))
+    text = f" {msg}" if msg is not None else ""
+    write(f'{white(f"[{label}]")}{text}')
 
 
 def ok(msg: str | None = None, label: str = "OK") -> None:
-    text = " " + msg if msg is not None else ""
-    write("%s%s" % (green("[%s]" % label), text))
+    text = f" {msg}" if msg is not None else ""
+    write(f'{green(f"[{label}]")}{text}')
 
 
 def warn(msg: str | None = None, label: str = "WARN") -> None:
-    text = " " + msg if msg is not None else ""
-    write("%s%s" % (yellow("[%s]" % label), text))
+    text = f" {msg}" if msg is not None else ""
+    write(f'{yellow(f"[{label}]")}{text}')
 
 #-----------------------------------------------------------------------------
 # Dev API

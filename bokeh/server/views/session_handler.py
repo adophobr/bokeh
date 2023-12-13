@@ -141,9 +141,9 @@ class SessionHandler(AuthRequestHandler):
             log.error("Session id had invalid signature: %r", session_id)
             raise HTTPError(status_code=403, reason="Invalid token or session ID")
 
-        session = await self.application_context.create_session_if_needed(session_id, self.request, token)
-
-        return session
+        return await self.application_context.create_session_if_needed(
+            session_id, self.request, token
+        )
 
 #-----------------------------------------------------------------------------
 # Private API

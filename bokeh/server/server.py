@@ -400,7 +400,9 @@ class Server(BaseServer):
         ``BokehTornado``.
 
         '''
-        log.info("Starting Bokeh server version %s (running on Tornado %s)" % (__version__, tornado_version))
+        log.info(
+            f"Starting Bokeh server version {__version__} (running on Tornado {tornado_version})"
+        )
 
         opts = _ServerOpts(kwargs)
 
