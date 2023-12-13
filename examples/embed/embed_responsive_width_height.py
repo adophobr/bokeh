@@ -8,6 +8,7 @@ body element in this case. A more realistic example might be embedding
 a plot in a Phosphor widget.
 
 """
+
 import random
 
 from bokeh.io import output_file, show
@@ -16,7 +17,7 @@ from bokeh.plotting import figure
 PLOT_OPTIONS = dict(width=600, height=400)
 SCATTER_OPTIONS = dict(size=12, alpha=0.5)
 
-data = lambda: [random.choice([i for i in range(100)]) for r in range(10)]
+data = lambda: [random.choice(list(range(100))) for _ in range(10)]
 
 red = figure(sizing_mode='scale_both', tools='pan', **PLOT_OPTIONS)
 red.scatter(data(), data(), color="red", **SCATTER_OPTIONS)

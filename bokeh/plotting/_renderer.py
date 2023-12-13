@@ -60,13 +60,11 @@ def get_default_color(plot=None):
         "#bcbd22", "#dbdb8d",
         "#17becf", "#9edae5"
     ]
-    if plot:
-        renderers = plot.renderers
-        renderers = [x for x in renderers if x.__view_model__ == "GlyphRenderer"]
-        num_renderers = len(renderers)
-        return colors[num_renderers]
-    else:
+    if not plot:
         return colors[0]
+    renderers = plot.renderers
+    renderers = [x for x in renderers if x.__view_model__ == "GlyphRenderer"]
+    return colors[len(renderers)]
 
 #-----------------------------------------------------------------------------
 # Dev API
@@ -285,9 +283,12 @@ def _process_sequence_literals(glyphclass, kwargs, source, is_user_source):
                     pass
                 elif val.dtype.kind == "U" and val.ndim == 1: # CSS strings
                     pass # TODO: currently this gets converted to List[str] in the serializer
-                elif (val.dtype == "uint8" or val.dtype.kind == "f") and val.ndim == 2 and val.shape[1] in (3, 4): # RGB/RGBA
-                    pass
-                else:
+                elif (
+                    val.dtype != "uint8"
+                    and val.dtype.kind != "f"
+                    or val.ndim != 2
+                    or val.shape[1] not in (3, 4)
+                ):
                     raise RuntimeError("Color columns need to be of type uint32[N], uint8[N] or uint8/float[N, {3, 4}]"
                                        f" ({var} is {val.dtype}[{', '.join(map(str, val.shape))}]")
             elif val.ndim != 1:

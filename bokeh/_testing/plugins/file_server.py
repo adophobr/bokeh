@@ -134,7 +134,7 @@ def file_server(request: pytest.FixtureRequest) -> SimpleWebServer:
 # Code
 #-----------------------------------------------------------------------------
 
-_html_root_error_message = "Can't find 'common_web' directory, try setting WEBDRIVER environment variable WEBDRIVER:" + WEBDRIVER + "  HTML_ROOT:" + HTML_ROOT
+_html_root_error_message = f"Can't find 'common_web' directory, try setting WEBDRIVER environment variable WEBDRIVER:{WEBDRIVER}  HTML_ROOT:{HTML_ROOT}"
 
 if not os.path.isdir(HTML_ROOT):
     log.error(_html_root_error_message)

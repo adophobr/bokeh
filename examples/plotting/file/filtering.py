@@ -31,7 +31,7 @@ r = p.patches(
     fill_color=field("rate", color_mapper),
 )
 
-r.data_source.data["code"] = [ code for code in states ]
+r.data_source.data["code"] = list(states)
 r.data_source.data["rate"] = [ january_2021[code] for code in states ]
 
 HI_i = list(states.keys()).index("HI")

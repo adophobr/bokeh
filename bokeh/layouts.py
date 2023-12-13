@@ -501,7 +501,7 @@ def _has_auto_sizing(item: LayoutDOM) -> bool:
 L = TypeVar("L", bound=LayoutDOM)
 def _parse_children_arg(*args: L | List[L], children: List[L] | None = None) -> List[L]:
     # Set-up Children from args or kwargs
-    if len(args) > 0 and children is not None:
+    if args and children is not None:
         raise ValueError("'children' keyword cannot be used with positional arguments")
 
     if not children:

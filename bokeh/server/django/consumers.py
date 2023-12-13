@@ -120,8 +120,9 @@ class SessionConsumer(AsyncHttpConsumer, ConsumerHelper):
                                    signed=False,
                                    expiration=300,
                                    extra_payload=payload)
-        session = await self.application_context.create_session_if_needed(session_id, self.request, token)
-        return session
+        return await self.application_context.create_session_if_needed(
+            session_id, self.request, token
+        )
 
 class AutoloadJsConsumer(SessionConsumer):
 

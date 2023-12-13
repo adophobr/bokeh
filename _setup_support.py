@@ -22,11 +22,16 @@ try:
     import colorama
     from colorama import Fore, Style
 
-    def bright(text): return "%s%s%s" % (Style.BRIGHT, text, Style.RESET_ALL)
-    def dim(text):    return "%s%s%s" % (Style.DIM,    text, Style.RESET_ALL)
-    def red(text):    return "%s%s%s" % (Fore.RED,     text, Style.RESET_ALL)
-    def green(text):  return "%s%s%s" % (Fore.GREEN,   text, Style.RESET_ALL)
-    def yellow(text): return "%s%s%s" % (Fore.YELLOW,  text, Style.RESET_ALL)
+    def bright(text):
+        return f"{Style.BRIGHT}{text}{Style.RESET_ALL}"
+    def dim(text):
+        return f"{Style.DIM}{text}{Style.RESET_ALL}"
+    def red(text):
+        return f"{Fore.RED}{text}{Style.RESET_ALL}"
+    def green(text):
+        return f"{Fore.GREEN}{text}{Style.RESET_ALL}"
+    def yellow(text):
+        return f"{Fore.YELLOW}{text}{Style.RESET_ALL}"
     sys.platform == "win32" and colorama.init()
 except ImportError:
     def bright(text):  return text
@@ -148,7 +153,7 @@ def build_or_install_bokehjs():
     if BUILD_JS in sys.argv:
         sys.argv.remove(BUILD_JS)
 
-        if not any(arg in sys.argv for arg in BUILDABLE_COMMANDS):
+        if all(arg not in sys.argv for arg in BUILDABLE_COMMANDS):
             print(f"Error: Option --build-js only valid with one of {BUILDABLE_COMMANDS!r}, exiting.")
             sys.exit(1)
 
@@ -211,9 +216,9 @@ def build_js():
     if result != 0:
         indented_msg = ""
         outmsg = proc.stdout.read().decode('ascii', errors='ignore')
-        outmsg = "\n".join("    " + x for x in outmsg.split("\n"))
+        outmsg = "\n".join(f"    {x}" for x in outmsg.split("\n"))
         errmsg = proc.stderr.read().decode('ascii', errors='ignore')
-        errmsg = "\n".join("    " + x for x in errmsg.split("\n"))
+        errmsg = "\n".join(f"    {x}" for x in errmsg.split("\n"))
         print(BUILD_FAIL_MSG % (red(outmsg), red(errmsg)))
         sys.exit(1)
 
@@ -224,9 +229,9 @@ def build_js():
         m = pat.match(line)
         if not m: continue # skip generate.py output lines
         stamp, txt = m.groups()
-        indented_msg += "   " + dim(green(stamp)) + " " + dim(txt) + "\n"
+        indented_msg += f"   {dim(green(stamp))} {dim(txt)}" + "\n"
     print(BUILD_SUCCESS_MSG % indented_msg)
-    print("Build time: %s" % bright(yellow("%0.1f seconds" % (t1-t0))))
+    print(f'Build time: {bright(yellow("%0.1f seconds" % (t1 - t0)))}')
     print()
     print("Build artifact sizes:")
     try:

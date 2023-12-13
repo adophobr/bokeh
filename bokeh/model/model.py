@@ -422,7 +422,7 @@ class Model(HasProps, HasDocumentRef, PropertyCallbackManager, EventCallbackMana
             source.js_on_change('streaming', callback)
 
         '''
-        if len(callbacks) == 0:
+        if not callbacks:
             raise ValueError("js_on_change takes an event name and one or more callbacks, got only one parameter")
 
         # handle any CustomJS callbacks here
@@ -434,7 +434,7 @@ class Model(HasProps, HasDocumentRef, PropertyCallbackManager, EventCallbackMana
         if descriptor is not None:
             event = f"change:{descriptor.name}"
 
-        old = {k: [cb for cb in cbs] for k, cbs in self.js_property_callbacks.items()}
+        old = {k: list(cbs) for k, cbs in self.js_property_callbacks.items()}
         if event not in self.js_property_callbacks:
             self.js_property_callbacks[event] = []
         for callback in callbacks:
@@ -496,9 +496,7 @@ class Model(HasProps, HasDocumentRef, PropertyCallbackManager, EventCallbackMana
         result = list(self.select(selector))
         if len(result) > 1:
             raise ValueError("Found more than one object matching %s: %r" % (selector, result))
-        if len(result) == 0:
-            return None
-        return result[0]
+        return None if not result else result[0]
 
     def set_select(self, selector: Type[Model] | SelectorType, updates: Dict[str, Unknown]) -> None:
         ''' Update objects that match a given selector with the specified

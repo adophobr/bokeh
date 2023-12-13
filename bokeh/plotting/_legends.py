@@ -47,7 +47,9 @@ LEGEND_ARGS = ['legend', 'legend_label', 'legend_field', 'legend_group']
 def pop_legend_kwarg(kwargs):
     result = {attr: kwargs.pop(attr) for attr in LEGEND_ARGS if attr in kwargs}
     if len(result) > 1:
-        raise ValueError("Only one of %s may be provided, got: %s" % (nice_join(LEGEND_ARGS), nice_join(result.keys())))
+        raise ValueError(
+            f"Only one of {nice_join(LEGEND_ARGS)} may be provided, got: {nice_join(result.keys())}"
+        )
     return result
 
 def update_legend(plot, legend_kwarg, glyph_renderer):
@@ -61,10 +63,7 @@ def update_legend(plot, legend_kwarg, glyph_renderer):
 #-----------------------------------------------------------------------------
 
 def _find_legend_item(label, legend):
-    for item in legend.items:
-        if item.label == label:
-            return item
-    return None
+    return next((item for item in legend.items if item.label == label), None)
 
 def _get_or_create_legend(plot):
     legends = plot.select(type=Legend)
@@ -74,14 +73,15 @@ def _get_or_create_legend(plot):
         return legend
     if len(legends) == 1:
         return legends[0]
-    raise RuntimeError("Plot %s configured with more than one legend renderer, cannot use legend_* convenience arguments" % plot)
+    raise RuntimeError(
+        f"Plot {plot} configured with more than one legend renderer, cannot use legend_* convenience arguments"
+    )
 
 def _handle_legend_field(label, legend, glyph_renderer):
     if not isinstance(label, str):
         raise ValueError("legend_field value must be a string")
     label = field(label)
-    item = _find_legend_item(label, legend)
-    if item:
+    if item := _find_legend_item(label, legend):
         item.renderers.append(glyph_renderer)
     else:
         new_item = LegendItem(label=label, renderers=[glyph_renderer])
@@ -108,8 +108,7 @@ def _handle_legend_label(label, legend, glyph_renderer):
     if not isinstance(label, str):
         raise ValueError("legend_label value must be a string")
     label = value(label)
-    item = _find_legend_item(label, legend)
-    if item:
+    if item := _find_legend_item(label, legend):
         item.renderers.append(glyph_renderer)
     else:
         new_item = LegendItem(label=label, renderers=[glyph_renderer])

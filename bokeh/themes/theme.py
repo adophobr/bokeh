@@ -219,7 +219,7 @@ class Theme:
                     continue
                 self._add_glyph_defaults(base, combined)
                 combined.update(attrs.get(base.__name__, _empty_dict))
-            if len(combined) == 0:
+            if not combined:
                 combined = _empty_dict
             self._by_class_cache[cls.__name__] = combined
         return self._by_class_cache[cls.__name__]

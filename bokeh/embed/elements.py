@@ -148,8 +148,7 @@ def html_page_for_render_items(bundle: Bundle | Tuple[str, str], docs_json: Dict
     elif isinstance(template, str):
         template = get_env().from_string("{% extends base %}\n" + template)
 
-    html = template.render(context)
-    return html
+    return template.render(context)
 
 def script_for_render_items(docs_json_or_id: ID | Dict[ID, DocJson], render_items: List[RenderItem],
                             app_path: str | None = None, absolute_url: str | None = None) -> str:
@@ -179,7 +178,7 @@ def script_for_render_items(docs_json_or_id: ID | Dict[ID, DocJson], render_item
         docs_json = escape(docs_json, quote=False)                # make HTML-safe
         docs_json = docs_json.replace("'", "&#x27;")              # remove single quotes
         docs_json = docs_json.replace("\\", "\\\\")               # double encode escapes
-        docs_json =  "'" + docs_json + "'"                        # JS string
+        docs_json = f"'{docs_json}'"
 
     js = DOC_JS.render(
         docs_json=docs_json,

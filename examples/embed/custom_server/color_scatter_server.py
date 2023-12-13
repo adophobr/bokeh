@@ -26,7 +26,7 @@ def render_plot():
               fill_color=colors, fill_alpha=0.6,
               line_color=None)
 
-    js, tag = autoload_static(p, CDN, "http://localhost:%s/plot.js" % port)
+    js, tag = autoload_static(p, CDN, f"http://localhost:{port}/plot.js")
 
     html = """
     <html>

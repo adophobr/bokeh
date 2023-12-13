@@ -98,13 +98,12 @@ class DashPattern(Either):
     def transform(self, value):
         value = super().transform(value)
 
-        if isinstance(value, str):
-            try:
-                return self._dash_patterns[value]
-            except KeyError:
-                return [int(x) for x in  value.split()]
-        else:
+        if not isinstance(value, str):
             return value
+        try:
+            return self._dash_patterns[value]
+        except KeyError:
+            return [int(x) for x in  value.split()]
 
 class FontSize(String):
 

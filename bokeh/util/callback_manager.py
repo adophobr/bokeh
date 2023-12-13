@@ -98,7 +98,7 @@ class EventCallbackManager:
                 _check_callback(callback, ('event',), what='Event callback')
 
         if event not in self._event_callbacks:
-            self._event_callbacks[event] = [cb for cb in callbacks]
+            self._event_callbacks[event] = list(callbacks)
         else:
             self._event_callbacks[event].extend(callbacks)
 
@@ -152,7 +152,7 @@ class PropertyCallbackManager:
             None
 
         '''
-        if len(callbacks) == 0:
+        if not callbacks:
             raise ValueError("on_change takes an attribute name and one or more callbacks, got only one parameter")
 
         _callbacks = self._callbacks.setdefault(attr, [])
@@ -165,7 +165,7 @@ class PropertyCallbackManager:
 
     def remove_on_change(self, attr: str, *callbacks: PropertyCallback) -> None:
         ''' Remove a callback from this object '''
-        if len(callbacks) == 0:
+        if not callbacks:
             raise ValueError("remove_on_change takes an attribute name and one or more callbacks, got only one parameter")
         _callbacks = self._callbacks.setdefault(attr, [])
         for callback in callbacks:
@@ -212,12 +212,12 @@ def _check_callback(callback: Callable[..., Any], fargs: Sequence[str], what: st
     '''Bokeh-internal function to check callback signature'''
     sig = signature(callback)
     formatted_args = str(sig)
-    error_msg = what + " must have signature func(%s), got func%s"
-
     all_names, default_values = get_param_info(sig)
 
     nargs = len(all_names) - len(default_values)
     if nargs != len(fargs):
+        error_msg = f"{what} must have signature func(%s), got func%s"
+
         raise ValueError(error_msg % (", ".join(fargs), formatted_args))
 
 #-----------------------------------------------------------------------------

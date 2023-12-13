@@ -63,12 +63,12 @@ class ProtocolHandler:
     _handlers: Dict[str, Callable[..., Any]]
 
     def __init__(self) -> None:
-        self._handlers = {}
-
-        self._handlers['PULL-DOC-REQ'] = ServerSession.pull
-        self._handlers['PUSH-DOC'] = ServerSession.push
-        self._handlers['PATCH-DOC'] = ServerSession.patch
-        self._handlers['SERVER-INFO-REQ'] = self._server_info_req
+        self._handlers = {
+            'PULL-DOC-REQ': ServerSession.pull,
+            'PUSH-DOC': ServerSession.push,
+            'PATCH-DOC': ServerSession.patch,
+            'SERVER-INFO-REQ': self._server_info_req,
+        }
 
     async def handle(self, message, connection):
         ''' Delegate a received message to the appropriate handler.
@@ -91,7 +91,7 @@ class ProtocolHandler:
             handler = self._handlers.get(message.msgtype)
 
         if handler is None:
-            raise ProtocolError("%s not expected on server" % message)
+            raise ProtocolError(f"{message} not expected on server")
 
         try:
             work = await handler(message, connection)

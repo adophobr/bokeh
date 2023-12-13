@@ -8,6 +8,7 @@ elements to draw custom outlines and fills.
     :refs: :ref:`userguide_plotting` > :ref:`userguide_plotting_line_glyphs`, :ref:`userguide_plotting` > :ref:`userguide_plotting_patch_polygon_glyphs`
     :keywords: outline, shading, fill
 '''
+
 import datetime as dt
 from time import mktime
 
@@ -107,5 +108,5 @@ if __name__ == "__main__":
     filename = "daylight.html"
     with open(filename, "w") as f:
         f.write(file_html(doc, INLINE, "Daylight Plot"))
-    print("Wrote %s" % filename)
+    print(f"Wrote {filename}")
     view(filename)

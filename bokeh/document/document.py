@@ -689,9 +689,7 @@ class Document:
         result = list(self.select(selector))
         if len(result) > 1:
             raise ValueError(f"Found more than one model matching {selector}: {result!r}")
-        if len(result) == 0:
-            return None
-        return result[0]
+        return None if not result else result[0]
 
     def set_select(self, selector: SelectorType | Type[Model], updates: Dict[str, Unknown]) -> None:
         ''' Update objects that match a given selector with the specified

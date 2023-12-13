@@ -208,11 +208,16 @@ class GlyphRenderer(DataRenderer):
             if 'field' in item and item['field'] not in self.data_source.column_names:
                 missing_values.add((item['field'], name))
         if missing_values:
-            suggestions = ['" (closest match: "%s")' % s[0] if s else '"' for s in [
-                get_close_matches(term[0], self.data_source.column_names, n=1) for term in missing_values]]
+            suggestions = [
+                f'" (closest match: "{s[0]}")' if s else '"'
+                for s in [
+                    get_close_matches(term[0], self.data_source.column_names, n=1)
+                    for term in missing_values
+                ]
+            ]
             missing_values = [("".join([m[0], s]), m[1]) for m, s in zip(missing_values, suggestions)]
-            missing = ['key "%s" value "%s' % (k, v) for v, k in missing_values]
-            return "%s [renderer: %s]" % (", ".join(sorted(missing)), self)
+            missing = [f'key "{k}" value "{v}' for v, k in missing_values]
+            return f'{", ".join(sorted(missing))} [renderer: {self}]'
 
     data_source = Instance(DataSource, help="""
     Local data source to use when rendering glyphs on the plot.
@@ -302,7 +307,7 @@ class GraphRenderer(DataRenderer):
         if "end" not in self.edge_renderer.data_source.column_names:
             missing.append("Column 'end' is missing in GraphSource.edge_renderer.data_source")
         if missing:
-            return " ,".join(missing) + " [%s]" % self
+            return " ,".join(missing) + f" [{self}]"
 
     layout_provider = Instance(LayoutProvider, help="""
     An instance of a ``LayoutProvider`` that supplies the layout of the network

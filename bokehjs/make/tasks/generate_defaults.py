@@ -20,12 +20,11 @@ class DefaultsSerializer(Serializer):
         if isinstance(obj, Model):
             properties = obj.properties_with_values(include_defaults=True)
             attributes = {key: self.encode(val) for key, val in properties.items()}
-            rep = ObjectRep(
+            return ObjectRep(
                 type="object",
                 name=obj.__qualified_model__,
                 attributes=attributes,
             )
-            return rep
         elif obj is Undefined:
             return SymbolRep(type="symbol", name="unset")
         else:

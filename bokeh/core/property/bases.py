@@ -122,7 +122,7 @@ class Property(PropertyDescriptorFactory[T]):
         default = default if default is not Intrinsic else Undefined
 
         if serialized is None:
-            self._serialized = False if readonly and default is Undefined else True
+            self._serialized = not readonly or default is not Undefined
         else:
             self._serialized = serialized
 
@@ -168,10 +168,7 @@ class Property(PropertyDescriptorFactory[T]):
         """
         if not callable(default):
             return copy(default)
-        else:
-            if no_eval:
-                return default
-            return default()
+        return default if no_eval else default()
 
     def _raw_default(self, *, no_eval: bool = False) -> T:
         """ Return the untransformed default value.
@@ -231,8 +228,7 @@ class Property(PropertyDescriptorFactory[T]):
         if isinstance(new, np.ndarray) or isinstance(old, np.ndarray):
             return np.array_equal(new, old)
 
-        pd = import_optional('pandas')
-        if pd:
+        if pd := import_optional('pandas'):
             if isinstance(new, pd.Series) or isinstance(old, pd.Series):
                 return np.array_equal(new, old)
 
@@ -348,11 +344,7 @@ class Property(PropertyDescriptorFactory[T]):
             obj = owner
 
             for fn, msg_or_fn in self.assertions:
-                if isinstance(fn, bool):
-                    result = fn
-                else:
-                    result = fn(obj, value)
-
+                result = fn if isinstance(fn, bool) else fn(obj, value)
                 assert isinstance(result, bool)
 
                 if not result:
@@ -414,10 +406,7 @@ class Property(PropertyDescriptorFactory[T]):
         return self
 
     def replace(self, old: Type[Property[Any]], new: Property[Any]) -> Property[Any]:
-        if self.__class__ == old:
-            return new
-        else:
-            return self
+        return new if self.__class__ == old else self
 
 TItem = TypeVar("TItem", bound=Property[Any])
 
@@ -452,9 +441,8 @@ class ParameterizedProperty(Property[TItem]):
     def replace(self, old: Type[Property[Any]], new: Property[Any]) -> Property[Any]:
         if self.__class__ == old:
             return new
-        else:
-            params = [ type_param.replace(old, new) for type_param in self.type_params ]
-            return self.__class__(*params)
+        params = [ type_param.replace(old, new) for type_param in self.type_params ]
+        return self.__class__(*params)
 
 class SingleParameterizedProperty(ParameterizedProperty[T]):
     """ A parameterized property with a single type parameter. """

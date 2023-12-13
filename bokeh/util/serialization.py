@@ -60,8 +60,7 @@ from .string import format_docstring
 @lru_cache(None)
 def _compute_datetime_types() -> Set[type]:
     result = {dt.time, dt.datetime, np.datetime64}
-    pd = import_optional('pandas')
-    if pd:
+    if pd := import_optional('pandas'):
         result.add(pd.Timestamp)
         result.add(pd.Timedelta)
         result.add(pd.Period)
@@ -268,12 +267,11 @@ def make_id() -> ID:
     '''
     global _simple_id
 
-    if settings.simple_ids():
-        with _simple_id_lock:
-            _simple_id += 1
-            return ID(str(_simple_id))
-    else:
+    if not settings.simple_ids():
         return make_globally_unique_id()
+    with _simple_id_lock:
+        _simple_id += 1
+        return ID(str(_simple_id))
 
 def make_globally_unique_id() -> ID:
     ''' Return a globally unique UUID.
@@ -360,13 +358,11 @@ def transform_series(series: pd.Series | pd.Index) -> npt.NDArray[Any]:
     '''
     pd = import_optional('pandas')
 
-    # not checking for pd here, this function should only be called if it
-    # is already known that series is a Pandas Series type
-    if isinstance(series, pd.PeriodIndex):
-        vals = series.to_timestamp().values  # type: ignore # pandas PeriodIndex type is misunderstood somehow
-    else:
-        vals = series.values
-    return vals
+    return (
+        series.to_timestamp().values
+        if isinstance(series, pd.PeriodIndex)
+        else series.values
+    )
 
 #-----------------------------------------------------------------------------
 # Dev API

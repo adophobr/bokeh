@@ -149,8 +149,9 @@ def process_tools_arg(plot: Plot, tools: str | Sequence[Tool | str],
     """
     tool_objs, tool_map = _resolve_tools(tools)
 
-    repeated_tools = [ str(obj) for obj in _collect_repeated_tools(tool_objs) ]
-    if repeated_tools:
+    if repeated_tools := [
+        str(obj) for obj in _collect_repeated_tools(tool_objs)
+    ]:
         warnings.warn(f"{','.join(repeated_tools)} are being repeated")
 
     if tooltips is not None:
@@ -177,7 +178,7 @@ def _resolve_tools(tools: str | Sequence[Tool | str]) -> Tuple[List[Tool], Dict[
             if isinstance(tool, Tool):
                 tool_objs.append(tool)
             elif isinstance(tool, str):
-                temp_tool_str += tool + ','
+                temp_tool_str += f'{tool},'
             else:
                 raise ValueError("tool should be a string or an instance of Tool class")
         tools = temp_tool_str

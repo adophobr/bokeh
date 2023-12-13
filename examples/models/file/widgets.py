@@ -87,7 +87,7 @@ pre_text = PreText(text="some text")
 def mk_tab(color):
     plot = figure(width=300, height=300)
     plot.scatter(flowers["petal_length"], flowers["petal_width"], color=color, fill_alpha=0.2, size=12)
-    return Panel(title="Tab 1: %s" % color.capitalize(), child=plot)
+    return Panel(title=f"Tab 1: {color.capitalize()}", child=plot)
 
 tabs = Tabs(tabs=[mk_tab("red"), mk_tab("green"), mk_tab("blue")])
 
@@ -157,5 +157,5 @@ if __name__ == "__main__":
     filename = "widgets.html"
     with open(filename, "w") as f:
         f.write(file_html(doc, INLINE, "Widgets"))
-    print("Wrote %s" % filename)
+    print(f"Wrote {filename}")
     view(filename)

@@ -44,11 +44,10 @@ plot.add_glyph(browsers_source, glyph)
 
 def polar_to_cartesian(r, start_angles, end_angles):
     cartesian = lambda r, alpha: (r*cos(alpha), r*sin(alpha))
-    points = []
-
-    for start, end in zip(start_angles, end_angles):
-        points.append(cartesian(r, (end + start)/2))
-
+    points = [
+        cartesian(r, (end + start) / 2)
+        for start, end in zip(start_angles, end_angles)
+    ]
     return zip(*points)
 
 first = True
@@ -103,5 +102,5 @@ doc.validate()
 filename = "donut.html"
 with open(filename, "w") as f:
     f.write(file_html(doc, INLINE, "Donut Chart"))
-print("Wrote %s" % filename)
+print(f"Wrote {filename}")
 view(filename)

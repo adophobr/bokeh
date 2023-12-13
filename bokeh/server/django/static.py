@@ -48,7 +48,11 @@ def serve_extensions(request, path):
         raise Http404
 
 def static_extensions(prefix: str = "/static/extensions/"):
-    return [re_path(r'^%s(?P<path>.*)$' % re.escape(prefix.lstrip('/')), serve_extensions)]
+    return [
+        re_path(
+            f"^{re.escape(prefix.lstrip('/'))}(?P<path>.*)$", serve_extensions
+        )
+    ]
 
 #-----------------------------------------------------------------------------
 # Dev API

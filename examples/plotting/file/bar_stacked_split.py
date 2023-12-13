@@ -6,6 +6,7 @@
     :keywords: bars, categorical, stacked
 
 '''
+
 from bokeh.models import ColumnDataSource
 from bokeh.palettes import GnBu3, OrRd3
 from bokeh.plotting import figure, show
@@ -25,11 +26,23 @@ imports = {'fruits' : fruits,
 p = figure(y_range=fruits, height=350, x_range=(-16, 16), title="Fruit import/export, by year",
            toolbar_location=None)
 
-p.hbar_stack(years, y='fruits', height=0.9, color=GnBu3, source=ColumnDataSource(exports),
-             legend_label=["%s exports" % x for x in years])
+p.hbar_stack(
+    years,
+    y='fruits',
+    height=0.9,
+    color=GnBu3,
+    source=ColumnDataSource(exports),
+    legend_label=[f"{x} exports" for x in years],
+)
 
-p.hbar_stack(years, y='fruits', height=0.9, color=OrRd3, source=ColumnDataSource(imports),
-             legend_label=["%s imports" % x for x in years])
+p.hbar_stack(
+    years,
+    y='fruits',
+    height=0.9,
+    color=OrRd3,
+    source=ColumnDataSource(imports),
+    legend_label=[f"{x} imports" for x in years],
+)
 
 p.y_range.range_padding = 0.1
 p.ygrid.grid_line_color = None

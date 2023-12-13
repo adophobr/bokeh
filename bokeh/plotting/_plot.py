@@ -85,7 +85,7 @@ def get_range(range_input):
                 return Range1d(start=start, end=end)
             except ValueError:  # @mattpap suggests ValidationError instead
                 pass
-    raise ValueError("Unrecognized range input: '%s'" % str(range_input))
+    raise ValueError(f"Unrecognized range input: '{str(range_input)}'")
 
 def get_scale(range_input, axis_type):
     if isinstance(range_input, (DataRange1d, Range1d)) and axis_type in ["linear", "datetime", "mercator", "auto", None]:
@@ -95,7 +95,7 @@ def get_scale(range_input, axis_type):
     elif isinstance(range_input, FactorRange):
         return CategoricalScale()
     else:
-        raise ValueError("Unable to determine proper scale for: '%s'" % str(range_input))
+        raise ValueError(f"Unable to determine proper scale for: '{str(range_input)}'")
 
 def process_axis_and_grid(plot, axis_type, axis_location, minor_ticks, axis_label, rng, dim):
     axiscls, axiskw = _get_axis_class(axis_type, rng, dim)
@@ -156,9 +156,7 @@ def _get_num_minor_ticks(axis_class, num_minor_ticks):
     if num_minor_ticks is None:
         return 0
     if num_minor_ticks == 'auto':
-        if axis_class is LogAxis:
-            return 10
-        return 5
+        return 10 if axis_class is LogAxis else 5
 
 #-----------------------------------------------------------------------------
 # Code

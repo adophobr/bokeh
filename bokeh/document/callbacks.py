@@ -265,7 +265,7 @@ class DocumentCallbackManager:
             self._change_callbacks[callback] = callback
 
     def on_change_dispatch_to(self, receiver: Any) -> None:
-        if not receiver in self._change_callbacks:
+        if receiver not in self._change_callbacks:
             self._change_callbacks[receiver] = lambda event: event.dispatch(receiver)
 
     def on_event(self, event: str | Type[Event], *callbacks: EventCallback) -> None:
@@ -351,8 +351,7 @@ class DocumentCallbackManager:
         if isinstance(event, ModelEvent):
             subscribed = self._subscribed_models[event.event_name].copy()
             for model_ref in subscribed:
-                model = model_ref()
-                if model:
+                if model := model_ref():
                     model._trigger_event(event)
 
         for cb in self._event_callbacks.get(event.event_name, []):

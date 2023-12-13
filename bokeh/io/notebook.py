@@ -325,7 +325,7 @@ def push_notebook(*, document: Document | None = None, state: State | None = Non
     # This is to avoid having an exception raised for attempting to create a
     # PATCH-DOC with no events. In the notebook, we just want to silently
     # ignore calls to push_notebook when there are no new events
-    if len(events) == 0:
+    if not events:
         return
 
     handle.doc.callbacks._held_events = []
@@ -456,7 +456,11 @@ def load_notebook(resources: Resources | None = None, verbose: bool = False,
             js_info = resources.js_files[0] if len(resources.js_files) == 1 else resources.js_files
             css_info = resources.css_files[0] if len(resources.css_files) == 1 else resources.css_files
 
-        warnings = ["Warning: " + msg.text for msg in resources.messages if msg.type == 'warn']
+        warnings = [
+            f"Warning: {msg.text}"
+            for msg in resources.messages
+            if msg.type == 'warn'
+        ]
         if _NOTEBOOK_LOADED and verbose:
             warnings.append('Warning: BokehJS previously loaded')
 
@@ -555,8 +559,8 @@ def show_app(app: Application, state: State, notebook_url: str | Callable[[int |
     else:
         url = _server_url(notebook_url, server.port)
 
-    logging.debug("Server URL is %s" % url)
-    logging.debug("Origin URL is %s" % origin)
+    logging.debug(f"Server URL is {url}")
+    logging.debug(f"Origin URL is {origin}")
 
     from ..embed import server_document
     script = server_document(url, resources=None)

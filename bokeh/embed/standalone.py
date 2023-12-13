@@ -268,7 +268,7 @@ def components(models: Model | Sequence[Model] | Dict[str, Model], wrap_script: 
 
     results: List[str] | List[RenderRoot]
     if wrap_plot_info:
-        results = list(div_for_root(root) for root in render_item.roots)
+        results = [div_for_root(root) for root in render_item.roots]
     else:
         results = list(render_item.roots)
 
@@ -472,13 +472,14 @@ def _title_from_models(models: Sequence[Union[Model, Document]], title: str | No
         if isinstance(p, Document):
             return p.title
 
-    # use title from any model's document
-    for p in cast(Sequence[Model], models):
-        if p.document is not None:
-            return p.document.title
-
-    # use default title
-    return DEFAULT_TITLE
+    return next(
+        (
+            p.document.title
+            for p in cast(Sequence[Model], models)
+            if p.document is not None
+        ),
+        DEFAULT_TITLE,
+    )
 
 #-----------------------------------------------------------------------------
 # Code

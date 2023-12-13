@@ -126,9 +126,7 @@ def generate_jwt_token(session_id: ID,
         payload[_TOKEN_ZLIB_KEY] = _base64_encode(compressed)
     token = _base64_encode(json.dumps(payload))
     secret_key = _ensure_bytes(secret_key)
-    if not signed:
-        return token
-    return token + '.' + _signature(token, secret_key)
+    return token if not signed else f'{token}.{_signature(token, secret_key)}'
 
 def get_session_id(token: str) -> ID:
     """Extracts the session id from a JWT token.
@@ -263,8 +261,8 @@ def _ensure_bytes(secret_key: Union[str, bytes, None]) -> bytes | None:
 
 # this is broken out for unit testability
 def _reseed_if_needed(using_sysrandom: bool, secret_key: bytes | None) -> None:
-    secret_key = _ensure_bytes(secret_key)
     if not using_sysrandom:
+        secret_key = _ensure_bytes(secret_key)
         # This is ugly, and a hack, but it makes things better than
         # the alternative of predictability. This re-seeds the PRNG
         # using a value that is hard for an attacker to predict, every

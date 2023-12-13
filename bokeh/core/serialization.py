@@ -306,9 +306,8 @@ class Serializer:
     def _encode_int(self, obj: int) -> AnyRep:
         if -_MAX_SAFE_INT < obj <= _MAX_SAFE_INT:
             return obj
-        else:
-            log.warning("out of range integer may result in loss of precision")
-            return self._encode_float(float(obj))
+        log.warning("out of range integer may result in loss of precision")
+        return self._encode_float(float(obj))
 
     def _encode_float(self, obj: float) -> NumberRep | float:
         if isnan(obj):
@@ -341,8 +340,7 @@ class Serializer:
             name=f"{module}.{name}",
         )
 
-        attributes = list(entries(obj))
-        if attributes:
+        if attributes := list(entries(obj)):
             rep["attributes"] = {key: self.encode(val) for key, val in attributes}
 
         return rep
@@ -565,7 +563,7 @@ class Deserializer:
 
     def _decode_set(self, obj: SetRep) -> Set[Any]:
         entries = obj["entries"]
-        return set([ self._decode(entry) for entry in entries ])
+        return {self._decode(entry) for entry in entries}
 
     def _decode_map(self, obj: MapRep) -> Dict[Any, Any]:
         entries = obj["entries"]
@@ -688,12 +686,11 @@ class Deserializer:
                 return cls
             else:
                 self.error(f"object of type '{type}' is not a subclass of 'Model'")
+        elif type == "Figure":
+            from ..plotting import figure
+            return figure # XXX: helps with push_session(); this needs a better resolution scheme
         else:
-            if type == "Figure":
-                from ..plotting import figure
-                return figure # XXX: helps with push_session(); this needs a better resolution scheme
-            else:
-                self.error(f"can't resolve type '{type}'")
+            self.error(f"can't resolve type '{type}'")
 
     def error(self, message: str) -> NoReturn:
         raise DeserializationError(message)

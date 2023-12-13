@@ -116,9 +116,8 @@ class Either(ParameterizedProperty):
     def replace(self, old: Type[Property[Any]], new: Property[Any]) -> Property[Any]:
         if self.__class__ == old:
             return new
-        else:
-            params = [ type_param.replace(old, new) for type_param in self.type_params ]
-            return Either(*params)
+        params = [ type_param.replace(old, new) for type_param in self.type_params ]
+        return Either(*params)
 
 #-----------------------------------------------------------------------------
 # Dev API

@@ -148,12 +148,11 @@ def OutputDocumentFor(objs: Sequence[Model], apply_theme: Theme | Type[FromCurdo
             _dispose_temp_doc(objs)
         doc = _create_temp_doc(objs)
     else:
-        if len(docs) == 0:
+        if not docs:
             doc = Document()
             for model in objs:
                 doc.add_root(model)
 
-        # handle a single shared document
         elif len(docs) == 1:
             doc = docs.pop()
 
@@ -163,10 +162,6 @@ def OutputDocumentFor(objs: Sequence[Model], apply_theme: Theme | Type[FromCurdo
                     _dispose_temp_doc(objs)
                 doc = _create_temp_doc(objs)
 
-            # we are using all the roots of a single doc, just use doc as-is
-            pass  # lgtm [py/unnecessary-pass]
-
-        # models have mixed docs, just make a quick clone
         else:
             def finish(): # NOQA
                 _dispose_temp_doc(objs)
@@ -272,7 +267,7 @@ class RenderRoots:
                 if root.name == key:
                     break
             else:
-                raise ValueError("root with '%s' name not found" % key)
+                raise ValueError(f"root with '{key}' name not found")
 
         return RenderRoot(elementid, root.id, root.name, root.tags)
 
@@ -329,27 +324,22 @@ def standalone_docs_json_and_render_items(models: Model | Document | Sequence[Mo
             for model in doc.roots:
                 roots[model] = make_globally_unique_id()
 
-    docs_json: Dict[ID, DocJson] = {}
-    for doc, (docid, _) in docs.items():
-        docs_json[docid] = doc.to_json()
-
-    render_items: List[RenderItem] = []
-    for _, (docid, roots) in docs.items():
-        render_items.append(RenderItem(docid, roots=roots))
-
+    docs_json: Dict[ID, DocJson] = {
+        docid: doc.to_json() for doc, (docid, _) in docs.items()
+    }
+    render_items: List[RenderItem] = [
+        RenderItem(docid, roots=roots) for docid, roots in docs.values()
+    ]
     return (docs_json, render_items)
 
 def submodel_has_python_callbacks(models: Sequence[Model | Document]) -> bool:
     ''' Traverses submodels to check for Python (event) callbacks
 
     '''
-    has_python_callback = False
-    for model in collect_models(models):
-        if len(model._callbacks) > 0 or len(model._event_callbacks) > 0:
-            has_python_callback = True
-            break
-
-    return has_python_callback
+    return any(
+        len(model._callbacks) > 0 or len(model._event_callbacks) > 0
+        for model in collect_models(models)
+    )
 
 def is_tex_string(text: str) -> bool:
     ''' Whether a string begins and ends with MathJax default delimiters
